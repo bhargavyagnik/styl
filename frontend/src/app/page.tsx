@@ -39,7 +39,7 @@ const HomePage: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:8000/process-image', formData, {
+      const response = await axios.post('/api/process-image', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
