@@ -1,5 +1,5 @@
 # Use a Node.js base image
-FROM node:22-alpine
+FROM node:21.6.2-slim
 
 # Set the working directory
 WORKDIR /app
@@ -14,10 +14,10 @@ RUN npm install
 COPY . .
 
 # Build the Next.js application
-# RUN npm run build
+RUN npm run build
 
 # Expose port 3000
 EXPOSE 3000
 
 # Start the Next.js server
-CMD ["npm", "run","dev"]
+CMD ["npm", "start"]
