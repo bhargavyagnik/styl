@@ -20,4 +20,4 @@ ENV UVICORN_RELOAD True     # Enable reloading on code changes
 EXPOSE 8000
 
 # Run Uvicorn command
-CMD ["uvicorn", "$UVICORN_MAIN", "--host", "$UVICORN_HOST", "--port", "$UVICORN_PORT", "--reload"]
+CMD ["uvicorn", "$UVICORN_MAIN", "--host", "0.0.0.0", "--port", "8000", "--reload"]
