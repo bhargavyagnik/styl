@@ -1,12 +1,13 @@
 # Define the build platform (adjust if needed)
 FROM --platform=$BUILDPLATFORM python:3.10-alpine AS builder
 
-WORKDIR .
+WORKDIR /app
 
 
 # Copy requirements.txt and install dependencies
-COPY . .
-RUN pip3 install -r requirements.txt
+COPY . /app
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install -r requirements.txt
 
 # Set environment variables for Uvicorn
 ENV UVICORN_MAIN main:app
