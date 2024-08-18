@@ -47,6 +47,7 @@ const TryOutfitPage: React.FC = () => {
     try {
       const response = await axios.post('/api/process-image', formData, {
         headers: {
+          method: 'POST',
           'Content-Type': 'multipart/form-data',
         },
       });
