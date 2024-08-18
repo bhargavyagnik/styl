@@ -1,159 +1,31 @@
-"use client"; // This is a client component 👈🏽
-import React, { useState } from 'react';
-import axios from 'axios';
-import { run } from 'node:test';
-
-interface OutfitItem {
-  item: string;
-  page_url: string;
-  image_url: string;
-}
+import Link from 'next/link';
+import Image from 'next/image';
 
 const HomePage: React.FC = () => {
-  const [file, setFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [outfitItems, setOutfitItems] = useState<OutfitItem[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      const selectedFile = event.target.files[0];
-      setFile(selectedFile);
-      setPreviewUrl(URL.createObjectURL(selectedFile));
-      setError(null);
-      setOutfitItems([]); // Clear previous results
-    }
-  };
-
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    if (!file) {
-      setError('Please select a file to upload.');
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append('file', file);
-
-    setIsLoading(true);
-
-    try {
-      const response = await axios.post('/api/process-image', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      setOutfitItems(response.data);
-      setError(null);
-    } catch (error) {
-      setError('An error occurred while processing the image.');
-      setOutfitItems([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
-    <div style={styles.container}>
-      <h1 style={styles.header}>Upload an Image to Get Outfit Suggestions</h1>
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <input type="file" accept="image/*" onChange={handleFileChange} style={styles.input} />
-        <button type="submit" style={styles.button} disabled={isLoading}>
-          {isLoading ? 'Uploading...' : 'Upload'}
-        </button>
-      </form>
-      {error && <p style={styles.error}>{error}</p>}
-      {previewUrl && (
-        <div style={styles.imagePreviewContainer}>
-          <img src={previewUrl} alt="Selected" style={styles.imagePreview} />
+    <div className="md:grid md:grid-cols-2 flex-column items-center justify-between min-h-screen">
+      <div className="flex flex-col py-10 items-center justify-between">
+        <div className="mb-10 md:mb-0 text-left ">
+          <h1 className="text-4xl md:text-8xl font-bold" > DISCOVER YOUR PERFECT LOOK. </h1>
+          <h1 className="text-4xl md:text-8xl font-bold" > with AI </h1>
+          <h2 className='text-2xl mb-5'> Scan. Style. Shop.</h2>
+          <Link href="/ai_stylist" className="bg-blue-600 text-white px-2 py-2 mb:px-10 mb:py-3 text-lg font-semibold hover:bg-blue-700 transition duration-300">
+            Try AI Stylist
+          </Link>
+          <p className='mb-5 mt-7 pr-5'> Convert Dressing room selfies to purchasing decision. With our AI based search, upload a pic and choose what apparel / assessory are you looking for, based on the style and we will recommend you the perfect color co-ordinated pair.</p>
         </div>
-      )}
-      {outfitItems.length > 0 && (
-        <div style={styles.resultContainer}>
-          <h2>Suggested Outfits</h2>
-          <div style={styles.gridContainer}>
-            {outfitItems.map((item, index) => (
-              <div key={index} style={styles.gridItem}>
-                <a href={item.page_url} target="_blank" rel="noopener noreferrer">
-                  <img src={item.image_url} alt={item.item} style={styles.gridImage} />
-                </a>
-                <p style={styles.itemName}>{item.item}</p>
-              </div>
-            ))}
-          </div>
+      </div>
+      <div>
+          <Image
+            src="/clothrack.jpg"
+            alt="Style Match Concept"
+            width={800}
+            height={1000}
+            className="rounded-lg"
+          />
         </div>
-      )}
     </div>
   );
 };
 
-const styles = {
-  container: {
-    padding: '20px',
-    maxWidth: '800px',
-    margin: '0 auto',
-    textAlign: 'center' as 'center',
-  },
-  header: {
-    fontSize: '24px',
-    marginBottom: '20px',
-  },
-  form: {
-    display: 'flex',
-    flexDirection: 'column' as 'column',
-    alignItems: 'center' as 'center',
-  },
-  input: {
-    marginBottom: '10px',
-  },
-  button: {
-    marginTop: '10px',
-    padding: '10px 20px',
-    fontSize: '16px',
-    cursor: 'pointer',
-  },
-  error: {
-    color: 'red',
-    marginTop: '10px',
-  },
-  imagePreviewContainer: {
-    marginTop: '20px',
-    textAlign: 'center' as 'center',
-  },
-  imagePreview: {
-    maxWidth: '100%',
-    maxHeight: '200px',
-    borderRadius: '5px',
-  },
-  resultContainer: {
-    marginTop: '20px',
-    textAlign: 'left' as 'left',
-  },
-  gridContainer: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
-    gap: '20px',
-    marginTop: '20px',
-  },
-  gridItem: {
-    display: 'flex',
-    flexDirection: 'column' as 'column',
-    alignItems: 'center',
-  },
-  gridImage: {
-    width: '100%',
-    height: '150px',
-    objectFit: 'cover' as 'cover',
-    borderRadius: '5px',
-  },
-  itemName: {
-    marginTop: '5px',
-    fontSize: '14px',
-    textAlign: 'center' as 'center',
-  },
-};
-
 export default HomePage;
-// npm run dev

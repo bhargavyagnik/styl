@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, File, HTTPException, Form
 from fastapi.responses import JSONResponse
 import google.generativeai as genai
 from langchain.prompts import PromptTemplate
@@ -13,6 +13,7 @@ import io
 import asyncio
 import requests
 from requests.exceptions import RequestException
+
 
 # Load environment variables
 load_dotenv()
@@ -52,20 +53,20 @@ prompt_template = PromptTemplate(
     If this is a hat, suggest multiple colors of shirts at max 10. If this is a shirt, suggest multiple colors of hats at max 10.
     For example. If the image is a polo tshirt of aqua blue color, suggest multiple colors of pants that can be worn with it.
     You can return a list that could be : ["black pant", "biege pant", "dark blue pant", "blue pant"]. This is just an example.
-    Suggest clothes based on style, color, and pattern.
+    Suggest {accessory} based on {style} style for gender {gender}.
     \n{format_instruction}\n Return in JSON object only.""",
     partial_variables={"format_instruction": parser.get_format_instructions()}
 )
 
 #https://programmablesearchengine.google.com/controlpanel/overview?cx=f5d90e0e4ebf94301
-def search_images(query, api_key, cx):
+def search_images(item,query, api_key, cx):
     search_url = "https://www.googleapis.com/customsearch/v1"
     params = {
         'q': query,
         'cx': cx,
         'key': api_key,
         'searchType': 'image',
-        'num': 1  # Number of results to return
+        'num': 2  # Number of results to return
     }
 
     try:
@@ -76,6 +77,7 @@ def search_images(query, api_key, cx):
         if 'items' in search_results and len(search_results['items']) > 0:
             first_result = search_results['items'][0]
             return {
+                'item': item,
                 'page_url': first_result['image']['contextLink'],
                 'image_url': first_result['link']
             }
@@ -91,19 +93,12 @@ def search_images(query, api_key, cx):
             'image_url': 'Error occurred'
         }
 
-def get_images(outfit_response):
+def get_images(outfit_response,additional_prompt):
     results = []
-    tasks = []
     for item in outfit_response.outfit:
-        task = search_images(item, google_api_key, google_cx)
-        tasks.append(task)
-    for item, search_result in zip(outfit_response.outfit, tasks):
-        results.append({
-            'item': item,
-            'page_url': search_result['page_url'],
-            'image_url': search_result['image_url']
-        })
-    
+        query = f"{additional_prompt['gender']} + AND + {item} + AND + {additional_prompt['accessory']}"
+        task = search_images(item,query, google_api_key, google_cx)
+        results.append(task)
     return results
 
 # Function to query the Gemini API asynchronously
@@ -116,8 +111,8 @@ async def query_gemini(prompt, image):
         return None 
 
 # Function to process the image and get a response from the Gemini API
-async def ask_gemini(image):
-    prompt = prompt_template.format()
+async def ask_gemini(image,additional_prompt):
+    prompt = prompt_template.format(gender=additional_prompt['gender'],style=additional_prompt['style'],accessory=additional_prompt['accessory'])
     response = await query_gemini(prompt, image)
     if response:
         try:
@@ -131,21 +126,24 @@ async def ask_gemini(image):
 
 # Define the route for image processing
 @app.post('/process-image')
-async def process_image(file: UploadFile = File(...)):
+async def process_image(file: UploadFile = File(...), gender:str = Form(...), styleType:str = Form(...),accessory:str = Form(...)):
+    
     try:
         # Convert the uploaded file to a PIL image
         image = Image.open(io.BytesIO(await file.read()))
-        
+        additional_prompt = {"gender":gender,"style":styleType,"accessory":accessory}
+        print(additional_prompt)
         # Process the image and get the response
-        response = await ask_gemini(image)
+        response = await ask_gemini(image,additional_prompt)
         
         if response:
-            image_response = get_images(response)
+            image_response = get_images(response,additional_prompt)
             print(image_response)
             return JSONResponse(content=image_response)
         else:
             raise HTTPException(status_code=500, detail="Error processing the image.")
     except Exception as e:
+        print(f"An error occurred: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 # Main entry point for running the app
