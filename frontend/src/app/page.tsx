@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 const HomePage: React.FC = () => {
   return (
-    <div className="md:grid md:grid-cols-2 flex-column items-center justify-between min-h-screen">
+    <div className="md:grid md:grid-cols-2 flex-column items-center justify-between pt-14 md:pt-1 min-h-screen ">
       <div className="flex flex-col py-10 items-center justify-between">
         <div className="mb-10 md:mb-0 text-left ">
           <h1 className="text-4xl md:text-8xl font-bold" > DISCOVER YOUR PERFECT LOOK. </h1>
