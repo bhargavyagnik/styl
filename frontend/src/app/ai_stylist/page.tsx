@@ -14,9 +14,9 @@ const TryOutfitPage: React.FC = () => {
   const [outfitItems, setOutfitItems] = useState<OutfitItem[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [gender, setGender] = useState<string>('');
-  const [styleType, setStyleType] = useState<string>('');
-  const [accessory, setAccessory] = useState<string>('');
+  const [gender, setGender] = useState<string>('unisex');
+  const [styleType, setStyleType] = useState<string>('casual');
+  const [accessory, setAccessory] = useState<string>('Tshirt or Pant');
   const suggestedOutfitsRef = useRef<HTMLDivElement>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,6 +57,7 @@ const TryOutfitPage: React.FC = () => {
       
       // Scroll to suggested outfits section
       if (suggestedOutfitsRef.current) {
+        
         suggestedOutfitsRef.current.scrollIntoView({ behavior: 'smooth' });
       }
     } catch (error) {
@@ -79,7 +80,7 @@ const TryOutfitPage: React.FC = () => {
               <p className="text-xs text-gray-500">PNG, JPG, GIF or Webp</p>
 
             </div>
-            <input id="dropzone-file" type="file" className="hidden" onChange={handleFileChange} accept="image/*" />
+            <input id="dropzone-file" type="file" className="hidden" onChange={handleFileChange} accept="image/*" capture/>
           </label>
         </div>
         <div className="grid grid-cols-3 gap-4 mb-4">
@@ -88,7 +89,7 @@ const TryOutfitPage: React.FC = () => {
             onChange={(e) => setGender(e.target.value)}
             className="block w-full p-2 border border-gray-300 rounded-md"
           >
-            <option value="">Select Gender</option>
+            <option value="">Gender</option>
             <option value="male">Male</option>
             <option value="female">Female</option>
             <option value="unisex">Unisex</option>
@@ -98,7 +99,7 @@ const TryOutfitPage: React.FC = () => {
             onChange={(e) => setStyleType(e.target.value)}
             className="block w-full p-2 border border-gray-300 rounded-md"
           >
-            <option value="">Select Style Type</option>
+            <option value="">Style Type</option>
             <option value="casual">Casual</option>
             <option value="formal">Formal</option>
             <option value="sporty">Sporty</option>

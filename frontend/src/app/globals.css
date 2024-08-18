@@ -36,10 +36,9 @@ header{
   background: rgb(var(--foreground-rgb));
   color: rgb(var(--background-start-rgb));
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  position: fixed;
   top: 0;
-  width: 100%;
   z-index: 1000; 
+  position: sticky;
 }
 footer{
   background: rgb(var(--foreground-rgb));
@@ -54,6 +53,17 @@ h1{
   font-family: 'bavex', sans-serif;
   font-weight: 900;
 }
+
+.notification {
+  background: rgb(var(--background-start-rgb));
+  color: rgb(var(--foreground-rgb));
+  padding: 20px;
+  border-radius: 5px;
+  margin: 20px 0;
+  z-index: 1;
+  box-shadow: 0 4px 6px rgba(var(--background-start-rgb), 0.468);
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
