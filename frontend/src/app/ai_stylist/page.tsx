@@ -26,7 +26,7 @@ const TryOutfitPage: React.FC = () => {
       suggestedOutfitsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }, [outfitItems]);
-  
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       const selectedFile = event.target.files[0];
@@ -54,8 +54,8 @@ const TryOutfitPage: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:8000/test-frontend', formData, {
-      // const response = await axios.post('/api/process-image', formData, {
+      // const response = await axios.post('http://localhost:8000/test-frontend', formData, {
+      const response = await axios.post('/api/process-image', formData, {
         headers: {
           method: 'POST',
           'Content-Type': 'multipart/form-data',
