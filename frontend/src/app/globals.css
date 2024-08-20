@@ -70,15 +70,16 @@ h1{
   }
 }
 
-.scanning .scan-line {
+.scan-line {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 8px;
+  width: 100%;
+  height: 5px;
   background: rgba(255, 255, 255, 0.8);
-  box-shadow: 0 0 50px rgba(255, 255, 255, 0.6);
-  animation: scan 2s linear infinite;
+  box-shadow: 0 0 50px 10px rgba(255, 255, 255, 0.6);
+  animation: scan 1.5s linear infinite;
 }
 
 @keyframes scan {
@@ -88,18 +89,4 @@ h1{
   100% {
     top: 100%;
   }
-}
-
-.scanning::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(to bottom, 
-    rgba(238, 238, 238, 0.5) 0%,
-    rgba(255,255,255,0) 50%,
-    rgba(255,255,255,0.5) 100%);
-  pointer-events: none;
 }

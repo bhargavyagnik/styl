@@ -17,28 +17,16 @@ const TryOutfitPage: React.FC = () => {
   const [gender, setGender] = useState<string>('unisex');
   const [styleType, setStyleType] = useState<string>('casual');
   const [accessory, setAccessory] = useState<string>('Tshirt or Pant');
-  const [isScanning, setIsScanning] = useState<boolean>(true);
-  const suggestedOutfitsRef = useRef<HTMLDivElement>(null);
-  const scanLineRef = useRef<HTMLDivElement>(null);
-  const imageRef = useRef<HTMLImageElement>(null);
-  const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
+  const suggestedOutfitsRef = useRef<HTMLDivElement|null>(null);
+  const [isScanning, setIsScanning] = useState<boolean>(false);
+
 
   useEffect(() => {
-    if (imageRef.current) {
-      const updateImageSize = () => {
-        setImageSize({
-          width: imageRef.current?.offsetWidth || 0,
-          height: imageRef.current?.offsetHeight || 0,
-        });
-      };
-
-      updateImageSize();
-      window.addEventListener('resize', updateImageSize);
-
-      return () => window.removeEventListener('resize', updateImageSize);
+    if (outfitItems.length > 0 && suggestedOutfitsRef.current) {
+      suggestedOutfitsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-  }, [previewUrl]);
-
+  }, [outfitItems]);
+  
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       const selectedFile = event.target.files[0];
@@ -55,8 +43,6 @@ const TryOutfitPage: React.FC = () => {
       setError('Please select a file to upload.');
       return;
     }
-    setIsScanning(true);
-    setIsLoading(true);
 
     const formData = new FormData();
     formData.append('file', file);
@@ -64,10 +50,11 @@ const TryOutfitPage: React.FC = () => {
     formData.append('styleType', styleType);
     formData.append('accessory', accessory);
 
+    setIsScanning(true);
     setIsLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:8000/process-image', formData, {
+      const response = await axios.post('http://localhost:8000/test-frontend', formData, {
       // const response = await axios.post('/api/process-image', formData, {
         headers: {
           method: 'POST',
@@ -78,27 +65,18 @@ const TryOutfitPage: React.FC = () => {
       setOutfitItems(response.data);
       setError(null);
       
-      // Scroll to suggested outfits section
-      if (suggestedOutfitsRef.current) {
-        
+      if (suggestedOutfitsRef.current){
         suggestedOutfitsRef.current.scrollIntoView({ behavior: 'smooth' });
       }
+      
     } catch (error) {
       setError('An error occurred while processing the image.');
       setOutfitItems([]);
     } finally {
-        setIsLoading(false);  
-        setIsScanning(false);
+      setIsLoading(false);
+      setIsScanning(false);
     }
   };
-
-  useEffect(() => {
-    // Set scan line width after image is loaded
-    if (imageRef.current && scanLineRef.current) {
-      scanLineRef.current.style.width = `${imageRef.current.clientWidth}px`;
-      console.log(imageRef.current.clientWidth);
-    }
-  }, [previewUrl]);
 
   return (
     <div className="max-w-4xl mx-auto mt-20">
@@ -155,29 +133,15 @@ const TryOutfitPage: React.FC = () => {
       </form>
       {error && <p className="text-red-500 text-center mb-4">{error}</p>}
       {previewUrl && (
-        <div className="mb-8 relative overflow-hidden">
-        <h2 className="text-xl font-semibold mb-2">Selected Image:</h2>
-        <div className={`relative inline-block ${isScanning ? 'scanning' : ''}`}>
-            <img
-              ref={imageRef}
-              src={previewUrl}
-              alt="Selected"
-              className="max-w-full h-auto rounded-lg shadow-md"
-            />
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold mb-2">Selected Image:</h2>
+          <div className="relative inline-block overflow-hidden">
+            <img src={previewUrl} alt="Selected" className="max-w-full h-auto rounded-lg shadow-md"/>
             {isScanning && (
-              <div 
-                className="scan-line"
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: `${imageSize.width}px`,
-                  height: '2px'
-                }}
-              ></div>
+              <div className="scan-line"></div>
             )}
           </div>
-      </div>
+        </div>
       )}
       {outfitItems.length > 0 && (
         <div ref={suggestedOutfitsRef}>
