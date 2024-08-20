@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef,useEffect } from 'react';
 import axios from 'axios';
 
 interface OutfitItem {
@@ -17,7 +17,27 @@ const TryOutfitPage: React.FC = () => {
   const [gender, setGender] = useState<string>('unisex');
   const [styleType, setStyleType] = useState<string>('casual');
   const [accessory, setAccessory] = useState<string>('Tshirt or Pant');
+  const [isScanning, setIsScanning] = useState<boolean>(true);
   const suggestedOutfitsRef = useRef<HTMLDivElement>(null);
+  const scanLineRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
+  const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
+
+  useEffect(() => {
+    if (imageRef.current) {
+      const updateImageSize = () => {
+        setImageSize({
+          width: imageRef.current?.offsetWidth || 0,
+          height: imageRef.current?.offsetHeight || 0,
+        });
+      };
+
+      updateImageSize();
+      window.addEventListener('resize', updateImageSize);
+
+      return () => window.removeEventListener('resize', updateImageSize);
+    }
+  }, [previewUrl]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -35,6 +55,8 @@ const TryOutfitPage: React.FC = () => {
       setError('Please select a file to upload.');
       return;
     }
+    setIsScanning(true);
+    setIsLoading(true);
 
     const formData = new FormData();
     formData.append('file', file);
@@ -45,7 +67,8 @@ const TryOutfitPage: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const response = await axios.post('/api/process-image', formData, {
+      const response = await axios.post('http://localhost:8000/process-image', formData, {
+      // const response = await axios.post('/api/process-image', formData, {
         headers: {
           method: 'POST',
           'Content-Type': 'multipart/form-data',
@@ -64,9 +87,18 @@ const TryOutfitPage: React.FC = () => {
       setError('An error occurred while processing the image.');
       setOutfitItems([]);
     } finally {
-      setIsLoading(false);
+        setIsLoading(false);  
+        setIsScanning(false);
     }
   };
+
+  useEffect(() => {
+    // Set scan line width after image is loaded
+    if (imageRef.current && scanLineRef.current) {
+      scanLineRef.current.style.width = `${imageRef.current.clientWidth}px`;
+      console.log(imageRef.current.clientWidth);
+    }
+  }, [previewUrl]);
 
   return (
     <div className="max-w-4xl mx-auto mt-20">
@@ -123,10 +155,29 @@ const TryOutfitPage: React.FC = () => {
       </form>
       {error && <p className="text-red-500 text-center mb-4">{error}</p>}
       {previewUrl && (
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-2">Selected Image:</h2>
-          <img src={previewUrl} alt="Selected" className="max-w-full h-auto rounded-lg shadow-md" />
-        </div>
+        <div className="mb-8 relative overflow-hidden">
+        <h2 className="text-xl font-semibold mb-2">Selected Image:</h2>
+        <div className={`relative inline-block ${isScanning ? 'scanning' : ''}`}>
+            <img
+              ref={imageRef}
+              src={previewUrl}
+              alt="Selected"
+              className="max-w-full h-auto rounded-lg shadow-md"
+            />
+            {isScanning && (
+              <div 
+                className="scan-line"
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: `${imageSize.width}px`,
+                  height: '2px'
+                }}
+              ></div>
+            )}
+          </div>
+      </div>
       )}
       {outfitItems.length > 0 && (
         <div ref={suggestedOutfitsRef}>

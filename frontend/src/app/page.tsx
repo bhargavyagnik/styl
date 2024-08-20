@@ -52,3 +52,5 @@ const HomePage: React.FC = () => {
 };
 
 export default HomePage;
+
+// https://lovi.care/?ref=godly
