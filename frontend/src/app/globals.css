@@ -116,7 +116,6 @@ h1{
   z-index: 10;
 }
 
-
 .callout-upload {
   top: 15%;
   left: 14%;
@@ -128,27 +127,86 @@ h1{
   width: 33%;
 }
 
-
 .callout-output {
   bottom: 15%;
   left: 10%;
 }
+
+.line {
+  position: absolute;
+  background-color: rgb(255, 255, 255);
+  box-shadow: #000000 0 0 10px;
+  height: 2.5px;
+  transform-origin: 0 0;
+  z-index: 1;
+}
+
+.line-upload {
+  top: calc(10% + 40px);  /* Adjust based on your callout box height */
+  left: calc(14% + 50px);  /* Adjust based on your callout box width */
+  width: 50px;
+  transform: rotate(13deg);
+}
+
+.line-aiscan {
+  top: 42%;
+  right: 25%;
+  width: 80px;
+  transform: rotate(0deg);
+}
+
+.line-output {
+  bottom: calc(15% + 40px);
+  left: calc(10% + 50px);
+  width: 60px;
+  transform: rotate(-25deg);
+}
+
 @media (min-width: 768px) {
-  .callout-box{
-    font-weight: 500;
-    font-size:large;
+  .callout-box {
+    font-weight: 100;
+    font-size: large;
   }
-  .callout-upload{
+  
+  .callout-upload {
     top: 15%;
     left: 10%;
   }
-  .callout-aiscan{
+  
+  .callout-aiscan {
     top: 35%;
     width: 35%;
     right: -10%;
   }
-  .callout-output{
+  
+  .callout-output {
     bottom: 15%;
     left: 10%;
+  }
+  
+  .line {
+    width: 100px;  /* Longer lines for larger screens */
+
+  }
+  .line-upload {
+    top: calc(15% + 40px);  /* Adjust based on your callout box height */
+    left: calc(14% + 50px);  /* Adjust based on your callout box width */
+    width: 140px;
+    transform: rotate(13deg);
+  }
+  
+  .line-aiscan {
+    top: 42%;
+    right: 25%;
+    width: 100px;
+    height: 3px;
+    transform: rotate(0deg);
+  }
+  
+  .line-output {
+    bottom: calc(15% + 40px);
+    left: calc(16% + 50px);
+    width: 120px;
+    transform: rotate(-25deg);
   }
 }

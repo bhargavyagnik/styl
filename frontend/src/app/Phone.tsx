@@ -38,6 +38,9 @@ const Phone: React.FC = () => {
                 <strong>Instant </strong><br/>
                 Suggestions
             </div>
+            <div className="line line-upload"></div>
+            <div className="line line-aiscan"></div>
+            <div className="line line-output"></div>
             <Image
                 src="/phone.png"
                 alt="iPhone Frame"
