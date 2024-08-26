@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from './Header';  // Adjust the import path as needed
 import Footer from './Footer';  // Adjust the import path as needed
+import Script from 'next/script';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,6 +21,18 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-T6NFKC8GR6"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-T6NFKC8GR6');
+          `}
+        </Script>
       </head>
       <body className={inter.className}>
         <Header />

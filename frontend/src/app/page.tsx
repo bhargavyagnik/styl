@@ -65,7 +65,7 @@ const HomePage: React.FC = () => {
               "hideTitle": true,
               "open": {
                 "trigger": "time",
-                "ms": 8000
+                "ms": 15000
               },
               "autoClose": 5000,
               "doNotShowAfterSubmit": true, 

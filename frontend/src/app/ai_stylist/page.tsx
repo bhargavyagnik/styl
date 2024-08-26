@@ -7,7 +7,15 @@ interface OutfitItem {
   page_url: string;
   image_url: string;
 }
-
+declare global {
+  interface Window {
+    gtag: (
+      type: string,
+      action: string,
+      params: { event_category: string; event_label: string }
+    ) => void;
+  }
+}
 const TryOutfitPage: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -37,46 +45,61 @@ const TryOutfitPage: React.FC = () => {
     }
   };
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    if (!file) {
-      setError('Please select a file to upload.');
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('gender', gender);
-    formData.append('styleType', styleType);
-    formData.append('accessory', accessory);
-
-    setIsScanning(true);
-    setIsLoading(true);
-
-    try {
-      // const response = await axios.post('http://localhost:8000/test-frontend', formData, {
-      const response = await axios.post('/api/process-image', formData, {
-        headers: {
-          method: 'POST',
-          'Content-Type': 'multipart/form-data',
-        },
+  const trackEvent = (action: string, label: string) => {
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', action, {
+        event_category: 'Outfit Search',
+        event_label: label,
       });
-
-      setOutfitItems(response.data);
-      setError(null);
-      
-      if (suggestedOutfitsRef.current){
-        suggestedOutfitsRef.current.scrollIntoView({ behavior: 'smooth' });
-      }
-      
-    } catch (error) {
-      setError('An error occurred while processing the image.');
-      setOutfitItems([]);
-    } finally {
-      setIsLoading(false);
-      setIsScanning(false);
     }
   };
+    const handleSubmit = async (event: React.FormEvent) => {
+      event.preventDefault();
+      if (!file) {
+        setError('Please select a file to upload.');
+        return;
+      }
+  
+      // Track the search event
+      trackEvent('search', `${gender}-${styleType}-${accessory}`);
+  
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('gender', gender);
+      formData.append('styleType', styleType);
+      formData.append('accessory', accessory);
+  
+      setIsScanning(true);
+      setIsLoading(true);
+  
+      try {
+        const response = await axios.post('/api/process-image', formData, {
+          headers: {
+            method: 'POST',
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+  
+        setOutfitItems(response.data);
+        setError(null);
+        
+        if (suggestedOutfitsRef.current){
+          suggestedOutfitsRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Track successful search
+        trackEvent('search_success', `${gender}-${styleType}-${accessory}`);
+      } catch (error) {
+        setError('An error occurred while processing the image.');
+        setOutfitItems([]);
+        
+        // Track search error
+        trackEvent('search_error', `${gender}-${styleType}-${accessory}`);
+      } finally {
+        setIsLoading(false);
+        setIsScanning(false);
+      }
+    };
 
   return (
     <div className="max-w-4xl mx-auto mt-5 min-h-screen">
