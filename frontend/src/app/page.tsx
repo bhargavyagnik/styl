@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-
+import Script from 'next/script';
 const HomePage: React.FC = () => {
   return (
     <div>
@@ -47,6 +47,25 @@ const HomePage: React.FC = () => {
         <h2 className='mb-5 mt-7 text-2xl md:text-7xl text-center pr-5'> Revolutionize your shopping experience with our AI-powered fashion assistant. </h2>
         {/* Upload a dressing room selfie, and instantly receive personalized recommendations for perfectly coordinated outfits. Say goodbye to endless browsing and indecision - our smart technology ensures you look stylish effortlessly, saving you time and money. Transform your wardrobe with just a click.             */}
       </div>
+      
+      <Script src="https://tally.so/widgets/embed.js" strategy="afterInteractive" />
+      <Script id="tally-js" strategy="afterInteractive">
+        {`
+          window.TallyConfig = {
+            "formId": "mKLvXD",
+            "popup": {
+              "emoji": {
+                "text": "👋",
+                "animation": "wave"
+              },
+              "open": {
+                "trigger": "time",
+                "ms": 8000
+              }
+            }
+          };
+        `}
+      </Script>
     </div>
   );
 };
