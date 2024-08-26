@@ -79,7 +79,7 @@ const TryOutfitPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto mt-20">
+    <div className="max-w-4xl mx-auto mt-20 min-h-screen">
       <h2 className="text-2xl font-bold mb-6 text-center">Upload an Image to Get Outfit Suggestions</h2>
       <form onSubmit={handleSubmit} className="mb-8">
         <div className="flex items-center justify-center w-full mb-4">
