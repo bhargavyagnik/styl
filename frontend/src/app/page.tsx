@@ -1,10 +1,12 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import Script from 'next/script';
+import Phone from './Phone';
+
 const HomePage: React.FC = () => {
   return (
     <div>
-      <div className="md:grid md:grid-cols-2 flex-column items-center justify-between pt-14 md:pt-1 min-h-screen ">
+      <div className="md:grid md:grid-cols-2 flex-column items-center justify-between pt-14 md:pt-1 min-h-screen">
         <div className="flex flex-col py-10 items-center justify-between">
           <div className="mb-10 md:mb-0 text-center md:text-left ">
             <h1 className="text-4xl md:text-8xl font-bold" > DISCOVER YOUR PERFECT LOOK. </h1>
@@ -46,8 +48,10 @@ const HomePage: React.FC = () => {
       <div className="flex-column items-center pt-5 justify-between min-h-screen ">
         <h2 className='mb-5 mt-7 text-2xl md:text-7xl text-center pr-5'> Revolutionize your shopping experience with our AI-powered fashion assistant. </h2>
         {/* Upload a dressing room selfie, and instantly receive personalized recommendations for perfectly coordinated outfits. Say goodbye to endless browsing and indecision - our smart technology ensures you look stylish effortlessly, saving you time and money. Transform your wardrobe with just a click.             */}
+        <div className="flex justify-center">
+          <Phone />
+        </div>
       </div>
-      
       <Script src="https://tally.so/widgets/embed.js" strategy="afterInteractive" />
       <Script id="tally-js" strategy="afterInteractive">
         {`
@@ -58,10 +62,13 @@ const HomePage: React.FC = () => {
                 "text": "👋",
                 "animation": "wave"
               },
+              "hideTitle": true,
               "open": {
                 "trigger": "time",
                 "ms": 8000
-              }
+              },
+              "autoClose": 5000,
+              "doNotShowAfterSubmit": true, 
             }
           };
         `}
