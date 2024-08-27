@@ -86,7 +86,7 @@ const Phone: React.FC = () => {
                 />
             </div>
             <div className="absolute top-[50%] left-[2.5%] w-[95%] h-[50%] overflow-hidden" style={getCalloutStyle(1)}>
-                <select className="block w-full p-2 border border-gray-300 rounded-md text-small">
+                <select className="block w-full p-2 border border-gray-300 rounded-md text-[0.65rem]/[1]">
                 <option value="Footwear">Footwear</option>
                 </select>
             </div>

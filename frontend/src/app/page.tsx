@@ -52,7 +52,7 @@ const HomePage: React.FC = () => {
           <Phone />
         </div>
       </div>
-      <Script src="https://tally.so/widgets/embed.js" strategy="afterInteractive" />
+      {/* <Script src="https://tally.so/widgets/embed.js" strategy="afterInteractive" />
       <Script id="tally-js" strategy="afterInteractive">
         {`
           window.TallyConfig = {
@@ -72,7 +72,7 @@ const HomePage: React.FC = () => {
             }
           };
         `}
-      </Script>
+      </Script> */}
     </div>
   );
 };
