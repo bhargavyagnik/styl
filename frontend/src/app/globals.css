@@ -106,21 +106,23 @@ h1{
 
 .callout-box {
   position: absolute;
-  background-color: #2563EB;
-  color: white;
+  background-color: #ffffff;
+  text-align: center;
+  color: rgb(0, 0, 0);
   border-color: #00000039;
   border-width: 2px;
   font-weight: 300;
   font-size: xx-small;
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
   z-index: 10;
+
 }
 
 .callout-upload {
   top: 15%;
-  left: 14%;
+  left: 1%;
 }
 
 .callout-aiscan {
@@ -149,7 +151,6 @@ h1{
   width: 50px;
   transform: rotate(13deg);
 }
-
 .line-aiscan {
   top: 42%;
   right: 25%;
@@ -164,6 +165,10 @@ h1{
   transform: rotate(-25deg);
 }
 
+.callout-box, .line {
+  transition: opacity 0.5s ease-in-out;
+}
+
 @media (min-width: 768px) {
   .callout-box {
     font-weight: 100;
@@ -172,7 +177,7 @@ h1{
   
   .callout-upload {
     top: 15%;
-    left: 10%;
+    left: 2%;
   }
   
   .callout-aiscan {
@@ -212,3 +217,5 @@ h1{
     transform: rotate(-25deg);
   }
 }
+
+
