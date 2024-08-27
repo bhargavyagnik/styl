@@ -7,6 +7,28 @@ interface OutfitItem {
   page_url: string;
   image_url: string;
 }
+
+interface LocationData {
+  country: string;
+  countryCode: string;
+  region: string;
+  regionName: string;
+  city: string;
+  zip: string;
+  lat: number;
+  lon: number;
+  timezone: string;
+  isp: string;
+  org: string;
+  as: string;
+  query: string;
+}
+
+interface ErrorResponse {
+  error: string;
+}
+
+
 declare global {
   interface Window {
     gtag: (
@@ -62,18 +84,36 @@ const TryOutfitPage: React.FC = () => {
   
       // Track the search event
       trackEvent('search', `${gender}-${styleType}-${accessory}`);
-  
+      let country: string | null = null;
+      try {
+        // First, get the user's location
+        const locationResponse = await axios.get<LocationData | ErrorResponse>('/api/get-ip-location');
+        
+        if ('error' in locationResponse.data) {
+          console.warn('Error fetching location:', locationResponse.data.error);
+        } else {
+          country = locationResponse.data.country;
+        }
+      }
+      catch (error) {
+        console.warn('Error fetching location:', error);
+      }
       const formData = new FormData();
       formData.append('file', file);
       formData.append('gender', gender);
       formData.append('styleType', styleType);
       formData.append('accessory', accessory);
-  
+      if (country) {
+        formData.append('location',country);
+      }
+      formData.append('brand',"zara");
+      
       setIsScanning(true);
       setIsLoading(true);
   
       try {
-        const response = await axios.post('/api/process-image', formData, {
+        // const response = await axios.post('/api/process-image', formData, {
+        const response = await axios.post('http://localhost:8000/process-image', formData, {
           headers: {
             method: 'POST',
             'Content-Type': 'multipart/form-data',

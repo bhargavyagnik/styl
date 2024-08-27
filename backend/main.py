@@ -61,7 +61,7 @@ prompt_template = PromptTemplate(
     If I ask for shoes, suggest shoes only, If I ask for pants, suggest pants/skirts/trousers/jeans/shorts only. If I ask for tshirts, suggest tshirts/shirts only.
     If I ask for sunglasses, suggest sunglasses only.
     Return the list with at max 5 items.
-    Suggest {accessory} based on {style} style for gender {gender}.
+    Based on current trends i, suggest the best {accessory} that can be worn with the image by {gender}.
     \n{format_instruction}\n Return in JSON object only.""",
     partial_variables={"format_instruction": parser.get_format_instructions()}
 )
@@ -74,7 +74,7 @@ def search_images(item,query, api_key, cx):
         'cx': cx,
         'key': api_key,
         'searchType': 'image',
-        'num': 2  # Number of results to return
+        'num': 1  # Number of results to return
     }
 
     try:
@@ -90,10 +90,7 @@ def search_images(item,query, api_key, cx):
                 'image_url': first_result['link']
             }
         else:
-            return {
-                'page_url': f'No results found for {query}',
-                'image_url': 'No image found'
-            }
+            return None
     except RequestException as e:
         print(f"An error occurred: {e}")
         return {
@@ -104,9 +101,11 @@ def search_images(item,query, api_key, cx):
 def get_images(outfit_response,additional_prompt):
     results = []
     for item in outfit_response.outfit:
-        query = f"{additional_prompt['gender']} + AND + {item} + AND + {additional_prompt['accessory']}"
+        query = f"{item} + AND + {additional_prompt['gender']} + AND +  {additional_prompt['accessory']}+ AND +gl:{additional_prompt['location']}"
+        #site:{additional_prompt['brand']}.*
         task = search_images(item,query, google_api_key, google_cx)
-        results.append(task)
+        if task!=None:
+            results.append(task)
     return results
 
 # Function to query the Gemini API asynchronously
@@ -134,13 +133,13 @@ async def ask_gemini(image,additional_prompt):
 
 # Define the route for image processing
 @app.post('/process-image')
-async def process_image(file: UploadFile = File(...), gender:str = Form(...), styleType:str = Form(...),accessory:str = Form(...)):
-    
+async def process_image(file: UploadFile = File(...), gender:str = Form(...), styleType:str = Form(...),accessory:str = Form(...),location:str = Form(...),brand:str = Form(...)):
+    print(location)
     try:
         # Convert the uploaded file to a PIL image
         image = Image.open(io.BytesIO(await file.read()))
-        additional_prompt = {"gender":gender,"style":styleType,"accessory":accessory}
-        print(additional_prompt)
+        additional_prompt = {"gender":gender,"style":styleType,"accessory":accessory,"location":location,"brand":brand}
+        #print(additional_prompt)
         # Process the image and get the response
         response = await ask_gemini(image,additional_prompt)
         
@@ -148,6 +147,8 @@ async def process_image(file: UploadFile = File(...), gender:str = Form(...), st
             print(response)
             image_response = get_images(response,additional_prompt)
             print(image_response)
+            if len(image_response) == 0:
+                raise HTTPException(status_code=404, detail="No results found")
             return JSONResponse(content=image_response)
         else:
             raise HTTPException(status_code=500, detail="Error processing the image.")

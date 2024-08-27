@@ -108,6 +108,8 @@ h1{
   position: absolute;
   background-color: #2563EB;
   color: white;
+  border-color: #00000039;
+  border-width: 2px;
   font-weight: 300;
   font-size: xx-small;
   border-radius: 10px;
