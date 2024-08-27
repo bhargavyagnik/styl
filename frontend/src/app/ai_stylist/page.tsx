@@ -112,7 +112,7 @@ const TryOutfitPage: React.FC = () => {
       setIsLoading(true);
   
       try {
-        const response = await axios.post('/api/process-image', formData, {
+        const response = await axios.post('/fastapi/process-image', formData, {
         // const response = await axios.post('http://localhost:8000/process-image', formData, {
           headers: {
             method: 'POST',
