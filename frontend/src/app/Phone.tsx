@@ -63,9 +63,9 @@ const Phone: React.FC = () => {
             <div className="callout-box callout-output" style={getCalloutStyle(3)}>
             <strong className="text-yellow-700">Instant <br/> Suggestions</strong>
             </div>
-            <div className="line line-upload" style={getCalloutStyle(1)}></div>
+            {/* <div className="line line-upload" style={getCalloutStyle(1)}></div>
             <div className="line line-aiscan" style={getCalloutStyle(2)}></div>
-            <div className="line line-output" style={getCalloutStyle(3)}></div>
+            <div className="line line-output" style={getCalloutStyle(3)}></div> */}
             <Image
                 src="/phone.png"
                 alt="iPhone Frame"
