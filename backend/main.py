@@ -62,6 +62,8 @@ prompt_template = PromptTemplate(
     If I ask for sunglasses, suggest sunglasses only.
     Return the list with at max 5 items.
     Based on current trends i, suggest the best {accessory} that can be worn with the image by {gender}.
+    The result should be a color then followed by the type of clothing. Like white slimfit pant, or white-black ovresized tshirt, or yellow polo tshirt or black leather shoes or white sneakers or blue tinted sunglasses etc. No need to mention more complex details.
+    If possible give from product catalog of just one brand - {brand} only.
     \n{format_instruction}\n Return in JSON object only.""",
     partial_variables={"format_instruction": parser.get_format_instructions()}
 )
@@ -101,7 +103,7 @@ def search_images(item,query, api_key, cx):
 def get_images(outfit_response,additional_prompt):
     results = []
     for item in outfit_response.outfit:
-        query = f"{item} + AND + {additional_prompt['gender']} + AND +  {additional_prompt['accessory']}+ AND +gl:{additional_prompt['location']}"
+        query = f"{item} + AND + {additional_prompt['gender']} + AND +  {additional_prompt['accessory']}+ AND +gl:{additional_prompt['location']} "
         #site:{additional_prompt['brand']}.*
         task = search_images(item,query, google_api_key, google_cx)
         if task!=None:
@@ -119,7 +121,7 @@ async def query_gemini(prompt, image):
 
 # Function to process the image and get a response from the Gemini API
 async def ask_gemini(image,additional_prompt):
-    prompt = prompt_template.format(gender=additional_prompt['gender'],style=additional_prompt['style'],accessory=additional_prompt['accessory'])
+    prompt = prompt_template.format(gender=additional_prompt['gender'],style=additional_prompt['style'],accessory=additional_prompt['accessory'],brand=additional_prompt['brand'])
     response = await query_gemini(prompt, image)
     if response:
         try:

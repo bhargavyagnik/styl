@@ -209,21 +209,34 @@ const TryOutfitPage: React.FC = () => {
       {outfitItems.length > 0 && (
         <div ref={suggestedOutfitsRef}>
           <h2 className="text-2xl font-semibold mb-4">Suggested Outfits</h2>
+          
+          {/* Item Names */}
+          <div className="mb-6">
+            <h3 className="text-xl font-semibold mb-2">Items:</h3>
+            <ul className="list-disc pl-5">
+              {outfitItems.map((item, index) => (
+                <li key={index} className="mb-1">
+                  <a href={item.page_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                    {item.item}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+          
+          {/* Image Grid */}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {outfitItems.map((item, index) => (
               <div key={index} className="border rounded-lg overflow-hidden shadow-md hover:shadow-lg transition duration-300">
                 <a href={item.page_url} target="_blank" rel="noopener noreferrer" className="block">
                   <img src={item.image_url} alt={item.item} className="w-full h-48 object-cover" />
-                  <div className="p-4">
-                    <p className="text-sm font-medium text-gray-900">{item.item}</p>
-                  </div>
                 </a>
               </div>
             ))}
           </div>
-        </div>
-      )}
-    </div>
+          </div>
+          )}
+      </div>
   );
 };
 
