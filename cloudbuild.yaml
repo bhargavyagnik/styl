@@ -5,9 +5,9 @@ steps:
   args:
   - '-c'
   - |
-    mkdir -p ~/.ssh && \\
-    gcloud secrets versions access latest --secret=cloud-build-ssh-key > ~/.ssh/id_rsa && \\
-    chmod 600 ~/.ssh/id_rsa && \\
+    mkdir -p ~/.ssh && 
+    gcloud secrets versions access latest --secret=cloud-build-ssh-key > ~/.ssh/id_rsa &&
+    chmod 600 ~/.ssh/id_rsa &&
     ssh-keyscan -H instance-20240817-002533 >> ~/.ssh/known_hosts
 
 # Step 2: Deploy to Compute Engine VM
