@@ -76,7 +76,7 @@ def search_images(item,query, api_key, cx):
         'cx': cx,
         'key': api_key,
         'searchType': 'image',
-        'num': 1  # Number of results to return
+        'num': 10  # Number of results to return
     }
 
     try:
@@ -85,12 +85,14 @@ def search_images(item,query, api_key, cx):
         search_results = response.json()
         
         if 'items' in search_results and len(search_results['items']) > 0:
-            first_result = search_results['items'][0]
-            return {
-                'item': item,
-                'page_url': first_result['image']['contextLink'],
-                'image_url': first_result['link']
-            }
+            results = []
+            for result in search_results['items']:
+                results.append({
+                    'item': result['title'],
+                    'page_url': result['image']['contextLink'],
+                    'image_url': result['link']
+                })
+            return results
         else:
             return None
     except RequestException as e:
@@ -107,7 +109,7 @@ def get_images(outfit_response,additional_prompt):
         #site:{additional_prompt['brand']}.*
         task = search_images(item,query, google_api_key, google_cx)
         if task!=None:
-            results.append(task)
+            results.extend(task)
     return results
 
 # Function to query the Gemini API asynchronously
