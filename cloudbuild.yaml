@@ -6,9 +6,9 @@ steps:
   - '-c'
   - |
     mkdir -p ~/.ssh
-    gcloud secrets versions access latest --secret=cloud-build-ssh-key > /root/.ssh/id_rsa
-    chmod 600 /root/.ssh/id_rsa
-    ssh-keyscan -H instance-20240817-002533 >> /root/.ssh/known_hosts
+    gcloud secrets versions access latest --secret=cloud-build-ssh-key > ~/.ssh/id_rsa
+    chmod 600 ~/.ssh/id_rsa
+    ssh-keyscan -H instance-20240817-002533 >> ~/.ssh/known_hosts
 
 # Step 2: Deploy to Compute Engine VM
 - name: 'gcr.io/cloud-builders/gcloud'
@@ -16,7 +16,7 @@ steps:
   args:
   - '-c'
   - |
-    ssh -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no instance-20240817-002533 \
+    ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no instance-20240817-002533 \
     'cd ~/styl && git pull && docker compose down && docker system prune -f && docker volume rm $(docker volume ls -qf dangling=true | xargs) && docker compose up -d --build'
 
 options:
