@@ -5,7 +5,7 @@ steps:
   - 'compute'
   - 'ssh'
   - 'instance-20240817-002533'
-  - '--zone=us-central1-a'
+  - '--zone=us-central1-c'
   - '--command=cd ~/styl && git pull && docker compose down && docker system prune && docker volume rm $(docker volume ls -qf dangling=true | xargs) && docker compose up -d --build'
 options:
   logging: CLOUD_LOGGING_ONLY
