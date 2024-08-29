@@ -1,11 +1,22 @@
 steps:
-# Step 1: Pull the latest changes from the GitHub repository
+# Step 1: Decrypt the SSH key
 - name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: 'bash'
   args:
-  - 'compute'
-  - 'ssh'
-  - 'instance-20240817-002533'
-  - '--zone=us-central1-c'
-  - '--command=cd ~/styl && git pull && docker compose down && docker system prune && docker volume rm $(docker volume ls -qf dangling=true | xargs) && docker compose up -d --build'
+  - '-c'
+  - |
+    gcloud secrets versions access latest --secret=cloud-build-ssh-key > /root/.ssh/id_rsa
+    chmod 600 /root/.ssh/id_rsa
+    ssh-keyscan -H instance-20240817-002533 >> /root/.ssh/known_hosts
+
+# Step 2: Deploy to Compute Engine VM
+- name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |
+    ssh -i /root/.ssh/id_rsa instance-20240817-002533 \
+    'cd ~/styl && git pull && docker compose down && docker system prune -f && docker volume rm $(docker volume ls -qf dangling=true | xargs) && docker compose up -d --build'
+
 options:
   logging: CLOUD_LOGGING_ONLY
