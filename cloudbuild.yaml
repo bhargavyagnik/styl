@@ -1,0 +1,12 @@
+steps:
+# Step 1: Pull the latest changes from the GitHub repository
+- name: 'gcr.io/cloud-builders/gcloud'
+  args:
+  - 'compute'
+  - 'ssh'
+  - '${VM_NAME}'
+  - '--zone=${VM_ZONE}'
+  - '--command=cd ~/styl && git pull && docker compose down && docker system prune && docker volume rm $(docker volume ls -qf dangling=true | xargs) && docker compose up -d --build'
+  env:
+  - 'VM_NAME=${_VM_NAME}'
+  - 'VM_ZONE=${_VM_ZONE}'
