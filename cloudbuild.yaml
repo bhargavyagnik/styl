@@ -10,3 +10,5 @@ steps:
   env:
   - 'VM_NAME=${_VM_NAME}'
   - 'VM_ZONE=${_VM_ZONE}'
+options:
+  logging: CLOUD_LOGGING_ONLY
