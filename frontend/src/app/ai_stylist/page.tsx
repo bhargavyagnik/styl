@@ -44,12 +44,12 @@ const TryOutfitPage: React.FC = () => {
   const [outfitItems, setOutfitItems] = useState<OutfitItem[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [gender, setGender] = useState<string>('unisex');
-  const [styleType, setStyleType] = useState<string>('casual');
-  const [accessory, setAccessory] = useState<string>('Tshirt or Pant');
+  const [gender, setGender] = useState<string>('any');
+  const [styleType, setStyleType] = useState<string>('any');
+  const [accessory, setAccessory] = useState<string>('any');
   const suggestedOutfitsRef = useRef<HTMLDivElement|null>(null);
   const [isScanning, setIsScanning] = useState<boolean>(false);
-
+  const [geminiResponse, setGeminiResponse] = useState<string[]>([]);
 
   useEffect(() => {
     if (outfitItems.length > 0 && suggestedOutfitsRef.current) {
@@ -64,6 +64,7 @@ const TryOutfitPage: React.FC = () => {
       setPreviewUrl(URL.createObjectURL(selectedFile));
       setError(null);
       setOutfitItems([]);
+      setGeminiResponse([]);
     }
   };
 
@@ -112,15 +113,16 @@ const TryOutfitPage: React.FC = () => {
       setIsLoading(true);
   
       try {
-        const response = await axios.post('/fastapi/process-image', formData, {
-        // const response = await axios.post('http://localhost:8000/process-image', formData, {
+        // const response = await axios.post('/fastapi/process-image', formData, {
+        const response = await axios.post('http://localhost:8000/process-image', formData, {
           headers: {
             method: 'POST',
             'Content-Type': 'multipart/form-data',
           },
         });
   
-        setOutfitItems(response.data);
+        setOutfitItems(response.data.suggested_items);
+        setGeminiResponse(response.data.gemini_response);
         setError(null);
         
         if (suggestedOutfitsRef.current){
@@ -162,9 +164,9 @@ const TryOutfitPage: React.FC = () => {
             onChange={(e) => setGender(e.target.value)}
             className="block w-full p-2 border border-gray-300 rounded-md"
           >
-            <option value="">Gender</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
+            <option value="any">Gender</option>
+            <option value="man">Man</option>
+            <option value="woman">Woman</option>
             <option value="unisex">Unisex</option>
           </select>
           <select
@@ -172,18 +174,17 @@ const TryOutfitPage: React.FC = () => {
             onChange={(e) => setStyleType(e.target.value)}
             className="block w-full p-2 border border-gray-300 rounded-md"
           >
-            <option value="">Style Type</option>
+            <option value="any">Style Type</option>
             <option value="casual">Casual</option>
             <option value="formal">Formal</option>
             <option value="sporty">Sporty</option>
-            <option value="bohemian">Bohemian</option>
           </select>
           <select
             value={accessory}
             onChange={(e) => setAccessory(e.target.value)}
             className="block w-full p-2 border border-gray-300 rounded-md"
           >
-            <option value="">Clothing/ Accessory </option>
+            <option value="any">Clothing/ Accessory </option>
             <option value="Tshirt">Tshirt</option>
             <option value="Pants/">Pants</option>
             <option value="Footwear">Footwear</option>
@@ -206,36 +207,36 @@ const TryOutfitPage: React.FC = () => {
           </div>
         </div>
       )}
+      {geminiResponse.length > 0 && (
+        <div className="mt-8">
+          <h2 className="text-2xl font-semibold mb-4">AI Stylist Suggestions</h2>
+          <p className="text-gray-700 mb-2">Based on the image you uploaded, our AI Stylist suggests the following:</p>
+          <ul className="list-disc pl-5">
+            {geminiResponse.map((item, index) => (
+              <li key={index} className="text-gray-700 mb-2">{item}</li>
+            ))}
+          </ul>
+        </div>
+      )}
       {outfitItems.length > 0 && (
         <div ref={suggestedOutfitsRef}>
-          <h2 className="text-2xl font-semibold mb-4">Suggested Outfits</h2>
+          <h2 className="text-2xl font-semibold mt-4 mb-4">Suggested Outfit Links</h2>
+          <p className="text-grey font-thin text-[10px] text-center mb-3 "> * Currently search is limited to specific brands. Contact us to add your favourite brands. </p>
           
-          {/* Item Names */}
-          <div className="mb-6">
-            <h3 className="text-xl font-semibold mb-2">Items:</h3>
-            <ul className="list-disc pl-5">
-              {outfitItems.map((item, index) => (
-                <li key={index} className="mb-1">
-                  <a href={item.page_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                    {item.item}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-          
-          {/* Image Grid */}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {outfitItems.map((item, index) => (
               <div key={index} className="border rounded-lg overflow-hidden shadow-md hover:shadow-lg transition duration-300">
                 <a href={item.page_url} target="_blank" rel="noopener noreferrer" className="block">
                   <img src={item.image_url} alt={item.item} className="w-full h-48 object-cover" />
+                  <div className="p-4">
+                    <p className="text-sm font-medium text-gray-900">{item.item}</p>
+                  </div>
                 </a>
               </div>
             ))}
           </div>
-          </div>
-          )}
+        </div>
+      )}
       </div>
   );
 };

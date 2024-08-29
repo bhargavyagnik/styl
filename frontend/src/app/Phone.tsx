@@ -133,7 +133,7 @@ const Phone: React.FC = () => {
             </div>}
         </div>
         </div>
-    <p className="text-grey font-thin text-[10px] text-center"> * Currently search is limited to H&M, Zara, Aritizia, Lululemon, and Uniqlo. Contact us to add your favourite brands. </p>
+    <p className="text-grey font-thin text-[10px] text-center"> * Currently search is limited to specific brands. Contact us to add your favourite brands. </p>
     </div>
   );
 };

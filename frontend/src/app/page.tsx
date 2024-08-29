@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Script from 'next/script';
 import Phone from './Phone';
+import BenefitCardsCarousel from './BenefitCardsCarousel';
 
 const HomePage: React.FC = () => {
   return (
@@ -52,6 +53,10 @@ const HomePage: React.FC = () => {
           <Phone />
         </div>
       </div>
+      {/* <div className="flex-column min-h-screen items-center justify-between pt-5">
+        <h2 className='mb-5 mt-7 text-2xl md:text-7xl text-center'>Why Choose Our Stylist?</h2>
+        <BenefitCardsCarousel />
+      </div> */}
       {/* <Script src="https://tally.so/widgets/embed.js" strategy="afterInteractive" />
       <Script id="tally-js" strategy="afterInteractive">
         {`
