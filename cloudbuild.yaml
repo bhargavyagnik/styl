@@ -4,11 +4,8 @@ steps:
   args:
   - 'compute'
   - 'ssh'
-  - '${VM_NAME}'
-  - '--zone=${VM_ZONE}'
+  - 'instance-20240817-002533'
+  - '--zone=us-central1-a'
   - '--command=cd ~/styl && git pull && docker compose down && docker system prune && docker volume rm $(docker volume ls -qf dangling=true | xargs) && docker compose up -d --build'
-  env:
-  - 'VM_NAME=instance-20240817-002533'
-  - 'VM_ZONE= us-central1-a'
 options:
   logging: CLOUD_LOGGING_ONLY
