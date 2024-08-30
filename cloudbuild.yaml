@@ -18,7 +18,13 @@ steps:
   - '-c'
   - |
     ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no bhargavyagnik99@34.44.98.81 \
-    'cd ~/styl && git pull && docker compose down && docker system prune -f && docker volume ls -qf dangling=true | grep . && docker volume rm $(docker volume ls -qf dangling=true) && docker compose up -d --build'
+    'cd ~/styl && \
+    git fetch --all && \
+    git reset --hard origin/main && \
+    (docker compose down || true) && \
+    (docker system prune -af --volumes || true) && \
+    (docker volume ls -qf dangling=true | xargs -r docker volume rm || true) && \
+    docker compose up -d --build'
 
 options:
   logging: CLOUD_LOGGING_ONLY

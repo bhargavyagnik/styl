@@ -28,7 +28,7 @@ ENV PORT=3000
 
 ENV HOSTNAME="0.0.0.0"
 
-CMD node server.js;
+CMD node ./.next/standaloneserver.js;
 
 # FROM base as dev
 # ENV NODE_ENV=development
