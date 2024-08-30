@@ -18,7 +18,6 @@ ENV NODE_ENV=production
 COPY --from=builder /app/public ./public
 
 RUN mkdir .next
-RUN chown nextjs:nodejs .next
 
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
