@@ -155,7 +155,7 @@ const TryOutfitPage: React.FC = () => {
               <p className="text-xs  ">PNG, JPG, GIF or Webp</p>
 
             </div>
-            <input id="dropzone-file" type="file" className="hidden" onChange={handleFileChange} accept="image/*" capture/>
+            <input id="dropzone-file" type="file" className="hidden" onChange={handleFileChange} accept="image/*" />
           </label>
         </div>
         <div className="grid grid-cols-3 gap-4 mb-4">
