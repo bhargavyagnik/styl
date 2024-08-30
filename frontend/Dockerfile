@@ -14,7 +14,6 @@ FROM base as production
 WORKDIR /app
 
 ENV NODE_ENV=production
-RUN npm ci
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
