@@ -17,8 +17,6 @@ ENV NODE_ENV=production
 
 COPY --from=builder /app/public ./public
 
-RUN mkdir .next
-
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
@@ -28,7 +26,7 @@ ENV PORT=3000
 
 ENV HOSTNAME="0.0.0.0"
 
-CMD node ./.next/standaloneserver.js;
+CMD npm run start
 
 # FROM base as dev
 # ENV NODE_ENV=development
