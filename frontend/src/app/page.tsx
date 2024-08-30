@@ -2,7 +2,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Script from 'next/script';
 import Phone from './Phone';
-import BenefitCardsCarousel from './BenefitCardsCarousel';
+import WhyUseAIStylist from './WhyUseAIStylist';
+import AIStylerFeatureHighlight from './howtouse';
+import AIStylerFAQ from './AIStylerFAQ';
 
 const HomePage: React.FC = () => {
   return (
@@ -53,10 +55,23 @@ const HomePage: React.FC = () => {
           <Phone />
         </div>
       </div>
-      {/* <div className="flex-column min-h-screen items-center justify-between pt-5">
-        <h2 className='mb-5 mt-7 text-2xl md:text-7xl text-center'>Why Choose Our Stylist?</h2>
-        <BenefitCardsCarousel />
-      </div> */}
+      <div className="flex-column items-center justify-between ">
+        <AIStylerFeatureHighlight/>
+      </div>
+      <div className="flex-column tems-center justify-between mt-14 mb-16">
+        <WhyUseAIStylist/>
+      </div>
+      <Image
+              src="/clothespinkbanner.webp"
+              alt="Clothes"
+              width={2000}
+              height={500}
+              
+            />
+      <div className="flex-column tems-center justify-between mt-14 mb-16">
+        <AIStylerFAQ/>
+      </div>
+
       {/* <Script src="https://tally.so/widgets/embed.js" strategy="afterInteractive" />
       <Script id="tally-js" strategy="afterInteractive">
         {`

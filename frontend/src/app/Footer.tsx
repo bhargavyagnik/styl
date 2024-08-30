@@ -18,11 +18,11 @@ export default function Header() {
             </Link>
           </div>
           <div className="flex space-x-4">
-            <Link href="/" className="hover:text-gray-300 transition-colors">Home</Link>
-            <Link href="/ai_stylist" className="hover:text-gray-300 transition-colors">AI Stylist</Link>
+            <Link href="/" className="hover:  transition-colors">Home</Link>
+            <Link href="/ai_stylist" className="hover:  transition-colors">AI Stylist</Link>
           </div>
         </div>
-        <div className="mt-8 text-center text-gray-400 text-sm">
+        <div className="mt-8 text-center   text-sm">
           <p>&copy; {new Date().getFullYear()} StyleMe. All rights reserved.</p>
           <p className="mt-2">Site developed by <a href="https://bhargavyagnik.com" target="_blank" rel="noopener noreferrer" className="underline hover:text-black transition-colors">Bhargav,Yash,& Tanmay</a></p>
         </div>

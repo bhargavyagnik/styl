@@ -169,6 +169,15 @@ h1{
   transition: opacity 0.5s ease-in-out;
 }
 
+.text-multicolor {
+  background: linear-gradient(to right, #ce634d, #CC4277, #5A31F4);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
 @media (min-width: 768px) {
   .callout-box {
     font-weight: 100;
