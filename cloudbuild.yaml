@@ -7,6 +7,7 @@ steps:
   - |
     mkdir -p ~/.ssh && 
     gcloud secrets versions access latest --secret=cloud-build-ssh-key > ~/.ssh/id_rsa &&
+    echo ~/.ssh/id_rsa &&
     chmod 600 ~/.ssh/id_rsa &&
     ssh-keyscan -H 34.44.98.81 >> ~/.ssh/known_hosts
 
