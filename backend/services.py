@@ -16,6 +16,30 @@ prompt_template = PromptTemplate(
     Based on the image, what are the color coordinated clothes that can be worn?.
     First, understand the color, type of clothing, and style and also the size of the person in the image.
     Now suggest multiple clothes that can be worn with the image.
+    1. **Preppy**: Classic, traditional, and polished, often associated with Ivy League style.
+2. **Hipster**: Eclectic, vintage-inspired, and often features a mix of high-end and thrift store pieces.
+3. **Skater**: Relaxed, casual, and often features bold graphics and athletic wear.
+4. **Rugged**: Outdoor-inspired, often features earthy tones and functional clothing.
+5. **Gentleman**: Classic, sophisticated, and elegant, often features tailored suits and accessories.
+6. **Streetwear**: Urban, trendy, and often features bold graphics and athletic wear.
+7. **Boho Chic**: Free-spirited, eclectic, and often features vintage and global-inspired pieces.
+8. **Luxury**: High-end, sophisticated, and often features designer brands and tailored clothing.
+
+**Women's Style Types:**
+
+1. **Boho Chic**: Free-spirited, eclectic, and often features vintage and global-inspired pieces.
+2. **Glam**: Sophisticated, glamorous, and often features high-end designer brands and statement pieces.
+3. **Minimalist**: Simple, clean, and often features a limited color palette and neutral tones.
+4. **Romantic**: Whimsical, feminine, and often features lace, florals, and soft pastels.
+5. **Sporty Chic**: Active, athletic, and often features bold graphics and functional clothing.
+6. **Vintage**: Inspired by past decades, often features retro patterns and classic silhouettes.
+7. **Edgy**: Bold, avant-garde, and often features statement pieces and unconventional styles.
+8. **Elegant**: Sophisticated, refined, and often features tailored suits and luxurious fabrics.
+9. **Laid-Back**: Casual, relaxed, and often features comfortable, everyday clothing.
+10. **Androgynous**: Blending traditional masculine and feminine styles, often features neutral tones and clean silhouettes.
+
+for men, the accessory options are from :  [ "T-shirts", "Shirts", "Sweaters", "Hoodies", "Jackets", "Blazers", "Pants", "Shorts", "Jeans", "Coats", "Windbreakers", "Athletic Shorts", "Track Pants", "Casual Shoes", "Dress Shoes", "Boots", "Sandals" ]
+and for women , the accesory options are from : [ "T-shirts", "Blouses", "Sweaters", "Cardigans", "Hoodies", "Jackets", "Blazers", "Pants", "Shorts", "Jeans", "Skirts", "Dresses", "Coats", "Windbreakers", "Athletic Shorts", "Leggings", "Casual Shoes", "Dress Shoes", "Boots", "Sandals", "Heels", "Rompers", "Jumpsuits" ]
     For example. If the image of a Male in a polo tshirt of aqua blue color, and you are asked to suggest multiple colors of accessory=Tshirt of Casual that can be worn with it.
     You can return a list that could be : ["black slimfit pant", "biege pant", "dark blue cargo pant", "blue denim pant"]. If it was formal, I could suggest shirts that could be worn 
     at an office etc. Based on gender the type of accessory and color of the accessory could change and as you are the AI fashion stylist you know the best.
@@ -28,35 +52,39 @@ prompt_template = PromptTemplate(
     If I ask for sunglasses, suggest sunglasses only.
     Return the list with at max 5 items.
     Based on current trends i, suggest the best {accessory} that can be worn with the image by {gender}.
-    The result should be a color then followed by the type of clothing. Like white slimfit pant, or white-black ovresized tshirt, or yellow polo tshirt or black leather shoes or white sneakers or blue tinted sunglasses etc. No need to mention more complex details.
+    The result should be a [color][type of clothing][shape/length] . Like white slimfit pant, or white-black ovresized tshirt, or yellow polo tshirt or black leather shoes or white sneakers or blue tinted sunglasses etc. No need to mention more complex details.
     \n{format_instruction}\n Return in JSON object only.""",
     partial_variables={"format_instruction": parser.get_format_instructions()}
 )
 
 def search_images(item, query,countryCode):
+    # https://developers.google.com/custom-search/v1/reference/rest/v1/cse/list
     search_url = "https://www.googleapis.com/customsearch/v1"
     params = {
         'q': query,
         'cx': SEARCH_ENGINE_ID,
         'key': GOOGLE_SEARCH_API_KEY,
         'searchType': 'image',
-        'num': 2,
-        'gl': countryCode
+        'num': 1,
+        'gl': countryCode.upper()
     }
 
     try:
         response = requests.get(search_url, params=params)
+        print(response)
         response.raise_for_status()
         search_results = response.json()
 
         if 'items' in search_results and len(search_results['items']) > 0:
             results = []
+            images = set()
             for result in search_results['items']:
-                results.append({
-                    'item': result['title'],
-                    'page_url': result['image']['contextLink'],
-                    'image_url': result['link']
-                })
+                if result['link'] not in images:
+                    results.append({
+                        'item': result['title'],
+                        'page_url': result['image']['contextLink'],
+                        'image_url': result['link']
+                    })
             return results
         else:
             return None
@@ -66,7 +94,7 @@ def search_images(item, query,countryCode):
 def get_images(outfit_response, additional_prompt):
     results = []
     for item in outfit_response.outfit:
-        query = f"{additional_prompt['gender']} AND {item} AND {additional_prompt['accessory']}"
+        query = f"{additional_prompt['gender']}'s {item} in {additional_prompt['location']}"
         try:
             task = search_images(item, query,additional_prompt['location'])
             print(task)

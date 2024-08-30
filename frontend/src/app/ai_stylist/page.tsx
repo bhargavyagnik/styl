@@ -51,6 +51,105 @@ const TryOutfitPage: React.FC = () => {
   const [isScanning, setIsScanning] = useState<boolean>(false);
   const [geminiResponse, setGeminiResponse] = useState<string[]>([]);
 
+  const genderOptions = [
+    { value: 'any', label: 'Any' },
+    { value: 'man', label: 'Man' },
+    { value: 'woman', label: 'Woman' },
+  ];
+
+  const maleStyles = [
+    { value: 'any', label: 'Any' },
+    { value: 'preppy', label: 'Preppy' },
+    { value: 'hipster', label: 'Hipster' },
+    { value: 'skater', label: 'Skater' },
+    { value: 'rugged', label: 'Rugged' },
+    { value: 'gentleman', label: 'Gentleman' },
+    { value: 'streetwear', label: 'Streetwear' },
+    { value: 'boho-chic', label: 'Boho Chic' },
+    { value: 'luxury', label: 'Luxury' },
+  ];
+
+  const femaleStyles = [
+    { value: 'any', label: 'Any' },
+    { value: 'boho-chic', label: 'Boho Chic' },
+    { value: 'glam', label: 'Glam' },
+    { value: 'minimalist', label: 'Minimalist' },
+    { value: 'romantic', label: 'Romantic' },
+    { value: 'sporty-chic', label: 'Sporty Chic' },
+    { value: 'vintage', label: 'Vintage' },
+    { value: 'edgy', label: 'Edgy' },
+    { value: 'elegant', label: 'Elegant' },
+    { value: 'laid-back', label: 'Laid-Back' },
+    { value: 'androgynous', label: 'Androgynous' },
+  ];
+
+  const maleClothing = [
+    { value: 'any', label: 'Any' },
+    { value: 't-shirts', label: 'T-shirts' },
+    { value: 'shirts', label: 'Shirts' },
+    { value: 'sweaters', label: 'Sweaters' },
+    { value: 'hoodies', label: 'Hoodies' },
+    { value: 'jackets', label: 'Jackets' },
+    { value: 'blazers', label: 'Blazers' },
+    { value: 'pants', label: 'Pants' },
+    { value: 'shorts', label: 'Shorts' },
+    { value: 'jeans', label: 'Jeans' },
+    { value: 'coats', label: 'Coats' },
+    { value: 'windbreakers', label: 'Windbreakers' },
+    { value: 'athletic-shorts', label: 'Athletic Shorts' },
+    { value: 'track-pants', label: 'Track Pants' },
+    { value: 'casual-shoes', label: 'Casual Shoes' },
+    { value: 'dress-shoes', label: 'Dress Shoes' },
+    { value: 'boots', label: 'Boots' },
+    { value: 'sandals', label: 'Sandals' },
+  ];
+
+  const femaleClothing = [
+    { value: 'any', label: 'Any' },
+    { value: 't-shirts', label: 'T-shirts' },
+    { value: 'blouses', label: 'Blouses' },
+    { value: 'sweaters', label: 'Sweaters' },
+    { value: 'cardigans', label: 'Cardigans' },
+    { value: 'hoodies', label: 'Hoodies' },
+    { value: 'jackets', label: 'Jackets' },
+    { value: 'blazers', label: 'Blazers' },
+    { value: 'pants', label: 'Pants' },
+    { value: 'shorts', label: 'Shorts' },
+    { value: 'jeans', label: 'Jeans' },
+    { value: 'skirts', label: 'Skirts' },
+    { value: 'dresses', label: 'Dresses' },
+    { value: 'coats', label: 'Coats' },
+    { value: 'windbreakers', label: 'Windbreakers' },
+    { value: 'athletic-shorts', label: 'Athletic Shorts' },
+    { value: 'leggings', label: 'Leggings' },
+    { value: 'casual-shoes', label: 'Casual Shoes' },
+    { value: 'dress-shoes', label: 'Dress Shoes' },
+    { value: 'boots', label: 'Boots' },
+    { value: 'sandals', label: 'Sandals' },
+    { value: 'heels', label: 'Heels' },
+    { value: 'rompers', label: 'Rompers' },
+    { value: 'jumpsuits', label: 'Jumpsuits' },
+    { value: 'tops', label: 'Tops' },
+    { value: 'gowns', label: 'Gowns' },
+  ];
+
+  useEffect(() => {
+    setStyleType('any');
+    setAccessory('any');
+  }, [gender]);
+
+  const getStyleOptions = () => {
+    if (gender === 'man') return maleStyles;
+    if (gender === 'woman') return femaleStyles;
+    return [{ value: 'any', label: 'Any' }];
+  };
+
+  const getAccessoryOptions = () => {
+    if (gender === 'man') return maleClothing;
+    if (gender === 'woman') return femaleClothing;
+    return [{ value: 'any', label: 'Any' }];
+  };
+
   useEffect(() => {
     if (outfitItems.length > 0 && suggestedOutfitsRef.current) {
       suggestedOutfitsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -113,8 +212,8 @@ const TryOutfitPage: React.FC = () => {
       formData.append('brand',"zara");
       
       try {
-        const response = await axios.post('/fastapi/process-image', formData, {
-        // const response = await axios.post('http://localhost:8000/process-image', formData, {
+        // const response = await axios.post('/fastapi/process-image', formData, {
+        const response = await axios.post('http://localhost:8000/process-image', formData, {
           headers: {
             method: 'POST',
             'Content-Type': 'multipart/form-data',
@@ -164,31 +263,33 @@ const TryOutfitPage: React.FC = () => {
             onChange={(e) => setGender(e.target.value)}
             className="block w-full p-2 border border-gray-300 rounded-md"
           >
-            <option value="any">Gender</option>
-            <option value="man">Man</option>
-            <option value="woman">Woman</option>
-            <option value="unisex">Unisex</option>
+            {genderOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
           </select>
           <select
             value={styleType}
             onChange={(e) => setStyleType(e.target.value)}
             className="block w-full p-2 border border-gray-300 rounded-md"
           >
-            <option value="any">Style Type</option>
-            <option value="casual">Casual</option>
-            <option value="formal">Formal</option>
-            <option value="sporty">Sporty</option>
+            {getStyleOptions().map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
           </select>
           <select
             value={accessory}
             onChange={(e) => setAccessory(e.target.value)}
             className="block w-full p-2 border border-gray-300 rounded-md"
           >
-            <option value="any">Clothing/ Accessory </option>
-            <option value="Tshirt">Tshirt</option>
-            <option value="Pants/">Pants</option>
-            <option value="Footwear">Footwear</option>
-            <option value="Sunglasses">Sunglasses</option>
+            {getAccessoryOptions().map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
           </select>
         </div>
         <button type="submit" className="mt-4 w-full bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition duration-300" disabled={isLoading}>
