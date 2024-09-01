@@ -65,7 +65,7 @@ def search_images(item, query,countryCode):
         'cx': SEARCH_ENGINE_ID,
         'key': GOOGLE_SEARCH_API_KEY,
         'searchType': 'image',
-        'num': 1,
+        'num': 2,
         'gl': countryCode.upper()
     }
 
