@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from './Header';  // Adjust the import path as needed
 import Footer from './Footer';  // Adjust the import path as needed
 import Script from 'next/script';
+import { Client } from "@gradio/client";
 
 const inter = Inter({ subsets: ["latin"] });
 
