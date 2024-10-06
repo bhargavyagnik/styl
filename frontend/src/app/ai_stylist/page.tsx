@@ -50,6 +50,8 @@ const TryOutfitPage: React.FC = () => {
   const suggestedOutfitsRef = useRef<HTMLDivElement|null>(null);
   const [isScanning, setIsScanning] = useState<boolean>(false);
   const [geminiResponse, setGeminiResponse] = useState<string[]>([]);
+  const [virtualTryOnImage, setVirtualTryOnImage] = useState<string | null>(null);
+  const [isTryingOn, setIsTryingOn] = useState<boolean>(false);
 
   const genderOptions = [
     { value: 'any', label: 'Any' },
@@ -212,8 +214,8 @@ const TryOutfitPage: React.FC = () => {
       formData.append('brand',"zara");
       
       try {
-        const response = await axios.post('/fastapi/process-image', formData, {
-        // const response = await axios.post('http://localhost:8000/process-image', formData, {
+        // const response = await axios.post('/fastapi/process-image', formData, {
+        const response = await axios.post('http://localhost:8000/process-image', formData, {
           headers: {
             method: 'POST',
             'Content-Type': 'multipart/form-data',
@@ -239,6 +241,42 @@ const TryOutfitPage: React.FC = () => {
       } finally {
         setIsLoading(false);
         setIsScanning(false);
+      }
+    };
+
+    const handleVirtualTryOn = async () => {
+      if (!file || outfitItems.length === 0) {
+        setError('Please upload an image and get outfit suggestions first.');
+        return;
+      }
+  
+      setIsTryingOn(true);
+      setError(null);
+  
+      try {
+        const formData = new FormData();
+        formData.append('personImage', file);
+        formData.append('garmentImageUrl', outfitItems[0].image_url);
+  
+        const response = await axios.post('/api/virtual-tryon', formData, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+  
+        setVirtualTryOnImage(response.data.image);
+  
+        // Track successful virtual try-on
+        trackEvent('virtual_try_on_success', 'Virtual Try-On');
+      } catch (error) {
+        console.error('Error during virtual try-on:', error);
+        setError('An error occurred during the virtual try-on process.');
+        
+        // Track virtual try-on error
+        trackEvent('virtual_try_on_error', 'Virtual Try-On');
+      } finally {
+        setIsTryingOn(false);
       }
     };
 
@@ -336,8 +374,29 @@ const TryOutfitPage: React.FC = () => {
               </div>
             ))}
           </div>
+          <button
+            onClick={handleVirtualTryOn}
+            className="mt-4 w-full bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700 transition duration-300"
+            disabled={isTryingOn}
+          >
+            {isTryingOn ? 'Processing...' : 'Try On Virtual Outfit'}
+          </button>
+
         </div>
       )}
+        <iframe
+	src="https://kwai-kolors-kolors-virtual-try-on.hf.space"
+	width="850"
+	height="450"
+></iframe>
+      
+      {/* {virtualTryOnImage && (
+        <div className="mt-8">
+          <h2 className="text-2xl font-semibold mb-4">Virtual Try-On Result</h2>
+          <img src={virtualTryOnImage} alt="Virtual Try-On" className="w-full rounded-lg shadow-md" />
+        </div>
+      )} */}
+
       </div>
   );
 };
