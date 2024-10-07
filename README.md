@@ -1,6 +1,6 @@
 # styl
 
-# About
+### About
 Styl is an application using AI based recommendations to provide clothing choises across various sites.
 
 It uses Gemini LLM with vision and custom designed prompts to suggest styles which are then searched over the internet via Programmatic search API on select sites.
